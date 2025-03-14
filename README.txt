@@ -1,3 +1,34 @@
+Sub GroupColumns()
+    Dim ws As Worksheet
+    Set ws = ActiveSheet  ' Modify if needed
+
+    ' Group Columns (Example: Group Columns B to D)
+    ws.Columns("B:D").Group
+    ws.Columns("F:H").Group
+    ws.Columns("J:L").Group
+
+    ' Show Outline Symbols (Plus/Minus Buttons)
+    ws.Outline.ShowSymbols = True
+End Sub
+
+' Macro to Expand All Groups
+Sub ExpandAllGroups()
+    Dim ws As Worksheet
+    Set ws = ActiveSheet
+    ws.Outline.ShowLevels ColumnLevels:=2
+End Sub
+
+' Macro to Collapse All Groups
+Sub CollapseAllGroups()
+    Dim ws As Worksheet
+    Set ws = ActiveSheet
+    ws.Outline.ShowLevels ColumnLevels:=1
+End Sub
+
+
+
+
+
 Sub MoveColumnsInSheets()
     Dim ws As Worksheet
     Dim header As String

@@ -1,3 +1,51 @@
+Sub MoveColumnsInSheets()
+    Dim ws As Worksheet
+    Dim header As String
+    Dim targetPos As Integer
+    
+    ' Define the worksheets, headers, and target positions
+    Dim sheetConfigs As Variant
+    sheetConfigs = Array( _
+        Array("Sheet1", "Cheks", 2), _
+        Array("Sheet2", "Amount", 3), _
+        Array("Sheet3", "Date", 4) _
+    )
+    
+    ' Loop through the configurations and apply the movement
+    Dim i As Integer
+    For i = LBound(sheetConfigs) To UBound(sheetConfigs)
+        Set ws = ThisWorkbook.Sheets(sheetConfigs(i)(0))
+        header = sheetConfigs(i)(1)
+        targetPos = sheetConfigs(i)(2)
+        MoveColumnByHeader ws, header, targetPos
+    Next i
+    
+    ' Clear clipboard
+    Application.CutCopyMode = False
+End Sub
+
+' Function to move a column by its header to a target position
+Sub MoveColumnByHeader(ws As Worksheet, header As String, targetPos As Integer)
+    Dim lastCol As Integer
+    Dim colIndex As Integer
+    
+    ' Find the last used column
+    lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+
+    ' Search for the column with the specified header
+    For colIndex = 1 To lastCol
+        If ws.Cells(1, colIndex).Value = header Then
+            ' Cut the column
+            ws.Columns(colIndex).Cut
+            ' Insert at the target position
+            ws.Columns(targetPos).Insert Shift:=xlToRight
+            ' Exit loop once found
+            Exit For
+        End If
+    Next colIndex
+End Sub
+
+
 # Test
 
 def get_quarterly_date(date_as_of: str) -> datetime:

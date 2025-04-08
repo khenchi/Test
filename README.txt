@@ -1,3 +1,24 @@
+import xlwings as xw
+
+# Open the source .xlsx workbook
+source_wb = xw.Book('source.xlsx')
+source_sheet = source_wb.sheets['Sheet1']  # Replace with your actual sheet name
+
+# Open the destination .xlsb workbook
+dest_wb = xw.Book('destination.xlsb')
+
+# Copy the sheet to the destination workbook
+source_sheet.api.Copy(Before=dest_wb.sheets[0].api)
+
+# Optionally rename the copied sheet in the destination
+dest_wb.sheets[0].name = 'CopiedSheet'
+
+# Save and close both workbooks
+dest_wb.save()
+source_wb.close()
+dest_wb.close()
+
+
 
 La feuille « New_MASAI_names » apparaît lorsqu'une nouvelle ligne contenant un Massai Name est présente dans les données de la base, mais n'existe pas dans le fichier MappingDB_RM.xlsx, onglet « Known_masai_names ».
 C’est par exemple le cas pour la catégorie « Other Adjustments YTD ».

@@ -5,6 +5,44 @@ import os
 source_xlsx = os.path.abspath("source.xlsx")
 destination_xlsb = os.path.abspath("converted.xlsb")
 
+# Launch Excel invisibly
+app = xw.App(visible=False)
+wb = app.books.open(source_xlsx)
+
+# Inject VBA to save the current workbook as .xlsb
+vba_code = f'''
+Sub SaveAsXLSB()
+    ThisWorkbook.SaveAs Filename:="{destination_xlsb.replace("\\", "\\\\")}", FileFormat:=50
+End Sub
+'''
+
+# Add VBA module
+vba_module = wb.api.VBProject.VBComponents.Add(1)
+vba_module.CodeModule.AddFromString(vba_code)
+
+# Run the macro (fully qualified name: workbook_name!macro_name)
+macro_name = f"{wb.name}!SaveAsXLSB"
+app.api.Application.Run(macro_name)
+
+# Close workbooks and Excel
+wb.close()
+app.quit()
+
+
+
+
+
+
+
+
+
+import xlwings as xw
+import os
+
+# Define file paths
+source_xlsx = os.path.abspath("source.xlsx")
+destination_xlsb = os.path.abspath("converted.xlsb")
+
 # Launch Excel (invisible)
 app = xw.App(visible=False)
 

@@ -5,6 +5,25 @@ import os
 source_xlsx = os.path.abspath("source.xlsx")
 destination_xlsb = os.path.abspath("converted.xlsb")
 
+# Launch Excel (invisible)
+app = xw.App(visible=False)
+wb = app.books.open(source_xlsx)
+
+# Save the file as .xlsb (FileFormat = 50)
+wb.api.SaveAs(Filename=destination_xlsb, FileFormat=50)
+
+# Clean up
+wb.close()
+app.quit()
+
+
+import xlwings as xw
+import os
+
+# Define file paths
+source_xlsx = os.path.abspath("source.xlsx")
+destination_xlsb = os.path.abspath("converted.xlsb")
+
 # Launch Excel invisibly
 app = xw.App(visible=False)
 wb = app.books.open(source_xlsx)

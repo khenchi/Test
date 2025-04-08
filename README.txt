@@ -1,3 +1,11 @@
+
+La feuille « New_MASAI_names » apparaît lorsqu'une nouvelle ligne contenant un Massai Name est présente dans les données de la base, mais n'existe pas dans le fichier MappingDB_RM.xlsx, onglet « Known_masai_names ».
+C’est par exemple le cas pour la catégorie « Other Adjustments YTD ».
+Pour éviter que ce contrôle ne se déclenche, il faut ajouter manuellement la catégorie concernée dans l’onglet « Known_masai_names » du fichier de mapping.
+
+
+
+
 Sub GroupColumns()
     Dim ws As Worksheet
     Set ws = ActiveSheet  ' Modify if needed

@@ -1,3 +1,39 @@
+Sub SaveSheetsWithoutButtons()
+    Dim tempWb As Workbook
+    Dim savePath As String
+    Dim sheetList As Variant
+    Dim shp As Shape
+    Dim ws As Worksheet
+
+    sheetList = Array("Sheet1", "Sheet2") ' Sheets to copy
+    savePath = "C:\Users\YourUsername\Documents\Sheets_Without_Buttons.xlsb"
+
+    ' Copy to a new workbook
+    ThisWorkbook.Sheets(sheetList).Copy
+    Set tempWb = ActiveWorkbook
+
+    ' Remove buttons (shapes and ActiveX) from copied sheets
+    For Each ws In tempWb.Worksheets
+        For Each shp In ws.Shapes
+            shp.Delete
+        Next shp
+    Next ws
+
+    ' Save as .xlsb
+    Application.DisplayAlerts = False
+    tempWb.SaveAs Filename:=savePath, FileFormat:=50
+    tempWb.Close SaveChanges:=False
+    Application.DisplayAlerts = True
+
+    MsgBox "Sheets saved without buttons."
+End Sub
+
+
+
+
+
+
+
 import xlwings as xw
 import os
 

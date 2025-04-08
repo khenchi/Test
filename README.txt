@@ -1,4 +1,43 @@
 import xlwings as xw
+import os
+
+# Define file paths
+source_xlsx = os.path.abspath("source.xlsx")
+destination_xlsb = os.path.abspath("converted.xlsb")
+
+# Launch Excel (invisible)
+app = xw.App(visible=False)
+
+# Open the source workbook
+wb = app.books.open(source_xlsx)
+
+# Inject VBA code to save the workbook as .xlsb
+vba_code = f'''
+Sub SaveAsXLSB()
+    Dim wb As Workbook
+    Set wb = Workbooks.Open("{source_xlsx.replace("\\", "\\\\")}")
+    wb.SaveAs Filename:="{destination_xlsb.replace("\\", "\\\\")}", FileFormat:=50  ' 50 = xlExcel12 (.xlsb)
+    wb.Close SaveChanges:=False
+End Sub
+'''
+
+# Add VBA module and insert the code
+vba_module = wb.api.VBProject.VBComponents.Add(1)  # 1 = standard module
+vba_module.CodeModule.AddFromString(vba_code)
+
+# Run the macro
+app.api.Application.Run("SaveAsXLSB")
+
+# Clean up
+wb.close()
+app.quit()
+
+
+
+
+
+
+import xlwings as xw
 
 # Open the source .xlsx workbook
 source_wb = xw.Book('source.xlsx')

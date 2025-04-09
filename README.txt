@@ -1,3 +1,27 @@
+Sub RunPythonWithArgs()
+    Dim pythonExe As String
+    Dim pythonScript As String
+    Dim filePath As String
+    Dim sheetNames As String
+    Dim command As String
+
+    pythonExe = "C:\Path\To\python.exe"
+    pythonScript = "C:\Path\To\my_script.py"
+
+    ' Arguments to pass
+    filePath = "C:\Users\Me\Documents\Workbook.xlsx"
+    sheetNames = "Sheet1,Sheet2"
+
+    ' Combine everything into a single command
+    command = """" & pythonExe & """ """ & pythonScript & """ """ & filePath & """ """ & sheetNames & """"
+
+    ' Run the command
+    Shell command, vbNormalFocus
+End Sub
+
+
+
+
 import sys
 
 def main():

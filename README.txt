@@ -1,3 +1,33 @@
+Sub RunPythonWithLog()
+    Dim pythonExe As String
+    Dim scriptPath As String
+    Dim sourcePath As String
+    Dim sheetName As String
+    Dim outputPath As String
+    Dim logFile As String
+    Dim command As String
+
+    ' Paths and arguments
+    pythonExe = "py -3.11" ' Or "python" or full path to python.exe
+    scriptPath = ThisWorkbook.Path & "\src\my_script.py"
+    sourcePath = ThisWorkbook.FullName
+    sheetName = "SheetToDelete"
+    outputPath = ThisWorkbook.Path & "\output\my_cleaned_file.xlsb"
+
+    ' Log file path
+    logFile = ThisWorkbook.Path & "\debug_log.txt"
+
+    ' Build the command
+    command = pythonExe & " """ & scriptPath & """ """ & sourcePath & """ """ & outputPath & """ """ & sheetName & """ > """ & logFile & """ 2>&1"
+
+    ' Execute the command silently
+    Shell "cmd.exe /c " & command, vbHide
+
+    MsgBox "Script executed. Check log: " & logFile
+End Sub
+
+
+
 import os
 import shutil
 import sys

@@ -1,3 +1,41 @@
+import xlwings as xw
+import shutil
+import os
+
+def process_xlsb(
+    source_path,
+    sheet_to_delete,
+    final_name,
+    destination_folder
+):
+    # Step 1 – Copy the source file
+    temp_path = os.path.join(destination_folder, "temp_copy.xlsb")
+    shutil.copy2(source_path, temp_path)
+
+    # Step 2 – Open the copy
+    app = xw.App(visible=False)
+    wb = app.books.open(temp_path)
+
+    # Step 3 – Delete the specified sheet
+    try:
+        wb.sheets(sheet_to_delete).delete()
+    except Exception as e:
+        print(f"Could not delete sheet '{sheet_to_delete}': {e}")
+
+    # Step 4 – Save under new name
+    final_path = os.path.join(destination_folder, final_name + ".xlsb")
+    wb.save(final_path)
+
+    # Step 5 – Clean up
+    wb.close()
+    app.quit()
+
+    # Optional – Delete temp file
+    os.remove(temp_path)
+
+    print(f"File saved to: {final_path}")
+
+
 Sub RunPythonWithArgs()
     Dim pythonExe As String
     Dim pythonScript As String

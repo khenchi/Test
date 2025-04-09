@@ -1,3 +1,29 @@
+import xlwings as xw
+
+def export_selected_sheets():
+    # Ouvre le classeur source
+    wb = xw.Book(r"C:\Users\YourUsername\Documents\SourceWorkbook.xlsm")
+
+    # Liste des feuilles à copier
+    sheet_names = ["Sheet1", "Sheet2"]
+
+    # Crée un nouveau classeur
+    new_wb = xw.Book()
+    # Supprime les feuilles par défaut
+    for s in new_wb.sheets:
+        s.delete()
+
+    # Copie les feuilles choisies
+    for name in sheet_names:
+        wb.sheets[name].copy(after=new_wb.sheets[-1])
+
+    # Enregistre le nouveau fichier en .xlsb
+    new_wb.save(r"C:\Users\YourUsername\Documents\ExportedFromPython.xlsb")
+    new_wb.close()
+    wb.close()
+
+
+
 Sub SaveSheetsWithoutButtons()
     Dim tempWb As Workbook
     Dim savePath As String

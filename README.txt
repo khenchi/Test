@@ -1,3 +1,21 @@
+import sys
+
+def main():
+    # sys.argv[0] is the script name
+    args = sys.argv[1:]  # Get all arguments passed from VBA
+    print("Arguments received:", args)
+
+    # Example: get a file path and sheet names
+    if len(args) >= 2:
+        filepath = args[0]
+        sheet_names = args[1].split(",")  # Sheet names passed as comma-separated
+        print("File path:", filepath)
+        print("Sheets:", sheet_names)
+
+if __name__ == "__main__":
+    main()
+
+
 import xlwings as xw
 
 def export_selected_sheets():

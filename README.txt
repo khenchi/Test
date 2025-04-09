@@ -1,3 +1,58 @@
+import os
+import shutil
+import sys
+import win32com.client
+
+def clean_xlsb_macro(source_path, output_path, sheet_to_delete):
+    # Step 1 – Copy the original file
+    temp_path = output_path.replace(".xlsb", "_temp.xlsb")
+    shutil.copy2(source_path, temp_path)
+
+    # Step 2 – Open Excel with COM interface
+    excel = win32com.client.DispatchEx("Excel.Application")
+    excel.Visible = False
+    excel.DisplayAlerts = False
+    excel.AutomationSecurity = 3  # Force macros to be disabled
+
+    try:
+        # Step 3 – Open the temp file with macros disabled
+        wb = excel.Workbooks.Open(temp_path)
+
+        # Step 4 – Remove the VBA project (clear it completely)
+        wb.VBProject.VBComponents.Clear()  # Requires Trust access to VBA project
+
+        # Step 5 – Delete the specified sheet
+        try:
+            sheet = wb.Sheets(sheet_to_delete)
+            sheet.Delete()
+        except Exception as e:
+            print(f"Could not delete sheet '{sheet_to_delete}': {e}")
+
+        # Step 6 – Save to final output file (clean, no macros)
+        wb.SaveAs(Filename=output_path, FileFormat=50)  # 50 = .xlsb
+        wb.Close(SaveChanges=False)
+        print(f"Saved macro-free version to: {output_path}")
+
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        # Clean up Excel COM object
+        excel.Quit()
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
+# --- Command-line usage (like from VBA) ---
+if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        print("Usage: python clean_xlsb.py <source_path> <output_path> <sheet_to_delete>")
+    else:
+        source_path = sys.argv[1]
+        output_path = sys.argv[2]
+        sheet_to_delete = sys.argv[3]
+        clean_xlsb_macro(source_path, output_path, sheet_to_delete)
+
+
+
 import xlwings as xw
 import shutil
 import os

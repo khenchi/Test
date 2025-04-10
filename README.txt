@@ -1,4 +1,58 @@
 import cx_Oracle
+
+def insert_dataframe_with_duplicate_check(
+    conn,
+    df,
+    table_name,
+    insert_columns,
+    key_columns
+):
+    """
+    Inserts a DataFrame into an Oracle table using a cx_Oracle connection,
+    skipping rows where key_columns already exist in the target table.
+
+    Args:
+        conn: cx_Oracle connection object
+        df: pandas DataFrame
+        table_name: string, name of the Oracle table
+        insert_columns: list of strings, column names to insert
+        key_columns: list of strings, column names used to check duplicates
+
+    Returns:
+        dict with count of inserted and skipped rows
+    """
+    cursor = conn.cursor()
+    inserted = 0
+    skipped = 0
+
+    # SQL statements
+    placeholders = ", ".join([f":{i+1}" for i in range(len(insert_columns))])
+    insert_sql = f"INSERT INTO {table_name} ({', '.join(insert_columns)}) VALUES ({placeholders})"
+
+    check_placeholders = ", ".join([f"{col} = :{i+1}" for i, col in enumerate(key_columns)])
+    check_sql = f"SELECT COUNT(*) FROM {table_name} WHERE {check_placeholders}"
+
+    for _, row in df.iterrows():
+        key_values = tuple(row[col] for col in key_columns)
+        cursor.execute(check_sql, key_values)
+        if cursor.fetchone()[0] == 0:
+            values = tuple(row[col] for col in insert_columns)
+            cursor.execute(insert_sql, values)
+            inserted += 1
+        else:
+            skipped += 1
+
+    conn.commit()
+    cursor.close()
+
+    return {"inserted": inserted, "skipped": skipped}
+
+
+
+
+
+
+import cx_Oracle
 import pandas as pd
 
 # Étape 1 : Connexion Oracle

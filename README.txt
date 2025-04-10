@@ -1,3 +1,36 @@
+import pandas as pd
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'A': [1, 2],
+    'B': [3, 4],
+    'C': [5, 6],
+    'D': [7, 8]
+})
+
+# Columns to move and reference column
+cols_to_move = ['B', 'C']
+after_col = 'A'
+
+# Find position after the reference column
+position = df.columns.get_loc(after_col) + 1
+
+# Extract the columns to move
+moved_cols = df[cols_to_move]
+
+# Drop them from original DataFrame
+df = df.drop(columns=cols_to_move)
+
+# Insert them back after the reference column
+df = pd.concat(
+    [df.iloc[:, :position], moved_cols, df.iloc[:, position:]],
+    axis=1
+)
+
+print(df)
+
+
+
 Sub RunPythonWithLog()
     Dim pythonExe As String
     Dim scriptPath As String

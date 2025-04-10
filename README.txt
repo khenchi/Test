@@ -1,3 +1,41 @@
+import cx_Oracle
+import pandas as pd
+
+# Étape 1 : Connexion Oracle
+dsn = cx_Oracle.makedsn("host", 1521, service_name="service_name")  # À adapter
+conn = cx_Oracle.connect(user="user", password="password", dsn=dsn)
+cursor = conn.cursor()
+
+# Étape 2 : Lecture du fichier Excel
+df = pd.read_excel("chemin\\vers\\fichier.xlsx")  # Adapter le chemin
+
+# Étape 3 : Définir les colonnes à insérer (doivent exister dans la table Oracle)
+colonnes = ['col1', 'col2', 'col3']  # À adapter selon ton fichier et ta table
+
+# Étape 4 : Construire la requête SQL dynamique
+placeholders = ", ".join([f":{i+1}" for i in range(len(colonnes))])
+sql = f"INSERT INTO nom_table ({', '.join(colonnes)}) VALUES ({placeholders})"
+
+# Étape 5 : Convertir le DataFrame en liste de tuples
+valeurs = [tuple(row[col] for col in colonnes) for _, row in df.iterrows()]
+
+# Étape 6 : Insertion vectorisée avec executemany (rapide et sans boucle explicite)
+try:
+    cursor.executemany(sql, valeurs)
+    conn.commit()
+    print("Données insérées avec succès.")
+except Exception as e:
+    conn.rollback()
+    print("Erreur d'insertion :", e)
+
+# Étape 7 : Fermer la connexion
+cursor.close()
+conn.close()
+
+
+
+
+
 import pandas as pd
 
 # Sample DataFrame

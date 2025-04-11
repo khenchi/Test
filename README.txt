@@ -1,3 +1,53 @@
+Sub ColorSpecificRanges(rangesToColor As Range, Optional rangesToExclude As Range)
+
+    'Define the color (e.g., RGB: Light Blue)
+    Dim NewColor As Long
+    NewColor = RGB(173, 216, 230)
+
+    Dim Cell As Range
+
+    'Loop through each cell in provided ranges
+    For Each Cell In rangesToColor
+        If Not rangesToExclude Is Nothing Then
+            If Intersect(Cell, rangesToExclude) Is Nothing Then
+                Cell.Interior.Color = NewColor
+            Else
+                Cell.Interior.ColorIndex = 0
+            End If
+        Else
+            Cell.Interior.Color = NewColor
+        End If
+    Next Cell
+
+End Sub
+
+
+'Example of how to initialize and call the function:
+Sub InitializeAndCall()
+
+    'Open specific workbook (replace with your workbook's path)
+    Dim wb As Workbook
+    Set wb = Workbooks.Open("C:\\Path\\YourWorkbook.xlsx")
+
+    'Set specific worksheet
+    Dim ws As Worksheet
+    Set ws = wb.Sheets("Sheet1")
+
+    'Define ranges clearly using the worksheet reference
+    Dim rangesToColor As Range
+    Set rangesToColor = Union(ws.Range("A1:A10"), ws.Range("C1:D5"), ws.Range("F3:G8"))
+
+    'Define optional exclusion ranges
+    Dim rangesToExclude As Range
+    Set rangesToExclude = Union(ws.Range("A5"), ws.Range("C3:C4"), ws.Range("F5"))
+
+    'Call the macro
+    Call ColorSpecificRanges(ws, rangesToColor, rangesToExclude)
+
+End Sub
+
+
+
 Sub ColorSpecificRanges()
 
     'Define the color (e.g., RGB: Light Blue)

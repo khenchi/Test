@@ -1,3 +1,38 @@
+Sub ColorSpecificRanges()
+
+    'Define the color (e.g., RGB: Light Blue)
+    Dim NewColor As Long
+    NewColor = RGB(173, 216, 230)
+
+    'Define the ranges to color
+    Dim RangesToColor As Range
+    Set RangesToColor = Union(Range("A1:A10"), Range("C1:D5"), Range("F3:G8"))
+
+    'Define ranges or cells to leave with default color
+    Dim RangesToExclude As Range
+    Set RangesToExclude = Union(Range("A5"), Range("C3:C4"), Range("F5"))
+
+    Dim Cell As Range
+
+    'Loop through each cell in RangesToColor
+    For Each Cell In RangesToColor
+        'Check if the current cell intersects with excluded ranges
+        If Intersect(Cell, RangesToExclude) Is Nothing Then
+            'Apply new color if not in excluded ranges
+            Cell.Interior.Color = NewColor
+        Else
+            'Reset color to default (no fill) if explicitly excluded
+            Cell.Interior.ColorIndex = 0
+        End If
+    Next Cell
+
+End Sub
+
+
+
+
+
+
 import cx_Oracle
 
 def insert_dataframe_with_duplicate_check(

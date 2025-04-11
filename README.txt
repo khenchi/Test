@@ -1,3 +1,14 @@
+
+
+
+
+Function EscapeSQL(value As String) As String
+    EscapeSQL = Replace(value, "'", "''")
+End Function
+
+
+
+
 Sub ColorSpecificRanges(rangesToColor As Range, Optional rangesToExclude As Range)
 
     'Define the color (e.g., RGB: Light Blue)

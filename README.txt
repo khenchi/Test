@@ -1,3 +1,101 @@
+import pandas as pd from dataclasses import dataclass, field from typing import List
+
+@dataclass class MaturityBucket: bucket_name: str consumption: float
+
+def __post_init__(self):
+    if self.consumption < 0:
+        raise ValueError("Bucket consumption cannot be negative")
+
+@dataclass class Curve: name: str limit: float total_consumption: float buckets: List[MaturityBucket] = field(default_factory=list)
+
+def __post_init__(self):
+    if self.limit <= 0:
+        raise ValueError("Curve limit must be positive")
+    if self.total_consumption < 0:
+        raise ValueError("Total consumption cannot be negative")
+
+def add_bucket(self, bucket: MaturityBucket):
+    if not isinstance(bucket, MaturityBucket):
+        raise TypeError("Expected a MaturityBucket instance")
+    self.buckets.append(bucket)
+
+@dataclass class Portfolio: curves: List[Curve] = field(default_factory=list)
+
+def add_curve(self, curve: Curve):
+    if not isinstance(curve, Curve):
+        raise TypeError("Expected a Curve instance")
+    self.curves.append(curve)
+
+def create_dataframe(self) -> pd.DataFrame:
+    rows = []
+    for curve in self.curves:
+        first_row = True
+        for bucket in curve.buckets:
+            row = {
+                "Curve": curve.name if first_row else "",
+                "Limit": curve.limit if first_row else "",
+                "Total Consumption": curve.total_consumption if first_row else "",
+                "Bucket": bucket.bucket_name,
+                "Bucket Consumption": bucket.consumption,
+                "% Bucket of Total": round((bucket.consumption / curve.total_consumption) * 100, 1)
+            }
+            rows.append(row)
+            first_row = False
+    return pd.DataFrame(rows)
+
+Example Usage (for testing purpose)
+
+if name == "main": portfolio = Portfolio()
+
+curve_a = Curve('Curve A', 1000, 750)
+curve_a.add_bucket(MaturityBucket('<1Y', 200))
+curve_a.add_bucket(MaturityBucket('1-3Y', 150))
+curve_a.add_bucket(MaturityBucket('3-5Y', 250))
+curve_a.add_bucket(MaturityBucket('>5Y', 150))
+portfolio.add_curve(curve_a)
+
+curve_b = Curve('Curve B', 1200, 950)
+curve_b.add_bucket(MaturityBucket('<1Y', 400))
+curve_b.add_bucket(MaturityBucket('1-3Y', 200))
+curve_b.add_bucket(MaturityBucket('3-5Y', 150))
+curve_b.add_bucket(MaturityBucket('>5Y', 200))
+portfolio.add_curve(curve_b)
+
+# Generate DataFrame
+df = portfolio.create_dataframe()
+print(df)
+
+# Optional: Export to Excel
+df.to_excel("curve_consumption.xlsx", index=False)
+
+
+
+import pytest from curve_maturity_oop import MaturityBucket, Curve, Portfolio
+
+---------- Test MaturityBucket ----------
+
+def test_bucket_creation(): bucket = MaturityBucket("<1Y", 100) assert bucket.bucket_name == "<1Y" assert bucket.consumption == 100
+
+def test_bucket_negative_consumption(): with pytest.raises(ValueError): MaturityBucket("1-3Y", -50)
+
+---------- Test Curve ----------
+
+def test_curve_creation(): curve = Curve("Curve A", 1000, 800) assert curve.name == "Curve A" assert curve.limit == 1000 assert curve.total_consumption == 800 assert curve.buckets == []
+
+def test_curve_invalid_limit(): with pytest.raises(ValueError): Curve("Invalid Curve", 0, 500)
+
+def test_curve_negative_consumption(): with pytest.raises(ValueError): Curve("Invalid Curve", 1000, -500)
+
+def test_add_valid_bucket(): curve = Curve("Test Curve", 1000, 500) bucket = MaturityBucket("3-5Y", 200) curve.add_bucket(bucket) assert len(curve.buckets) == 1 assert curve.buckets[0].bucket_name == "3-5Y"
+
+def test_add_invalid_bucket(): curve = Curve("Test Curve", 1000, 500) with pytest.raises(TypeError): curve.add_bucket("not a bucket")
+
+---------- Test Portfolio ----------
+
+def test_portfolio_add_curve(): portfolio = Portfolio() curve = Curve("Curve A", 1000, 800) portfolio.add_curve(curve) assert len(portfolio.curves) == 1 assert portfolio.curves[0].name == "Curve A"
+
+def test_portfolio_dataframe(): portfolio = Portfolio() curve = Curve("Curve A", 1000, 800) curve.add_bucket(MaturityBucket("<1Y", 200)) curve.add_bucket(MaturityBucket("1-3Y", 100)) portfolio.add_curve(curve) df = portfolio.create_dataframe() assert len(df) == 2 assert df.iloc[0]["Curve"] == "Curve A" assert df.iloc[1]["Curve"] == "" assert df.iloc[0]["Bucket"] == "<1Y" assert df.iloc[1]["Bucket"] == "1-3Y"
+
 
 
 

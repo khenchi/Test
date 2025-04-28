@@ -1,3 +1,62 @@
+
+Sub MergeAndCenterColumns()
+    Dim ws As Worksheet
+    Dim tableRange As Range
+    Dim leftBottomCell As Range
+    Dim lastRow As Long
+    Dim colPositions As Variant
+    Dim colPos As Variant
+    Dim currentRow As Long
+    Dim startRow As Long
+    Dim endRow As Long
+    Dim col As Long
+    Dim cellValue As String
+    
+    ' --- Paramètres à adapter ---
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Remplacer par le nom de ta feuille
+    Set leftBottomCell = ws.Range("A100") ' Remplacer par la cellule en bas à gauche de ta table
+    colPositions = Array(1, 2, 3) ' Colonnes à traiter : 1 = colonne A, 2 = colonne B, etc.
+    
+    ' Détermination de la dernière ligne de la table
+    lastRow = leftBottomCell.End(xlUp).Row
+    
+    ' Boucle sur chaque colonne à traiter
+    For Each colPos In colPositions
+        col = colPos
+        currentRow = 1
+        
+        ' Trouver la première cellule de la table pour la colonne
+        currentRow = ws.Cells(1, col).End(xlDown).Row
+        
+        Do While currentRow <= lastRow
+            ' Si cellule non vide
+            If ws.Cells(currentRow, col).Value <> "" Then
+                startRow = currentRow
+                endRow = startRow
+                
+                ' Chercher les lignes vides en dessous
+                Do While endRow + 1 <= lastRow And ws.Cells(endRow + 1, col).Value = ""
+                    endRow = endRow + 1
+                Loop
+                
+                ' Fusionner si plusieurs lignes
+                If endRow > startRow Then
+                    With ws.Range(ws.Cells(startRow, col), ws.Cells(endRow, col))
+                        .Merge
+                        .HorizontalAlignment = xlCenter
+                        .VerticalAlignment = xlCenter
+                    End With
+                End If
+                
+                ' Passer à la prochaine cellule après le groupe fusionné
+                currentRow = endRow + 1
+            Else
+                currentRow = currentRow + 1
+            End If
+        Loop
+    Next colPos
+End Sub
+
 import pandas as pd from dataclasses import dataclass, field from typing import List
 
 @dataclass class MaturityBucket: bucket_name: str consumption: float
